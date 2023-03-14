@@ -11,6 +11,7 @@ import '../module/response/response_model.dart';
 import '../module/user/token_model.dart';
 import '../module/user/user_model.dart';
 import '../pages/Bulletin/bulletin_board_page.dart';
+import '../pages/Calendar/calendar_page.dart';
 import '../pages/main_page.dart';
 import '../providers/user_info_provider.dart';
 
@@ -28,7 +29,7 @@ class _PageRouterState extends State<PageRouter> {
   static String obj_id = '';
 
   final List<Widget> _widgetOptions = <Widget>[
-    MainPage(),
+    CalendarPage(),
     BulletinBoardPage(),
     ProfilePage(),
   ];

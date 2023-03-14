@@ -1,12 +1,14 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/route_manager.dart';
 import 'package:intl/intl.dart';
 import 'package:pet_care/providers/events_provider.dart';
 import 'package:pet_care/widgets/text_field.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CalendarPage extends StatefulWidget {
   const CalendarPage({Key? key}) : super(key: key);
@@ -32,13 +34,34 @@ class _CalendarPageState extends State<CalendarPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    loadData();
     _selectedDay = _focusedDay;
     _selectedEvents = ValueNotifier(_getEventsForDay(_selectedDay!));
+  }
+
+  loadData() async {
+    final storage = await SharedPreferences.getInstance();
+    String storageData = storage.getString('mapData') ?? 'nothing';
+    if(storageData == 'nothing') {
+      print(storageData);
+    } else {
+      var loadMapData = jsonDecode(storageData);
+      context.read<EventsProvider>().loadEvents(loadMapData);
+    }
+  }
+
+  saveData() async{
+    final storage = await SharedPreferences.getInstance();
+    String map = jsonEncode(context.read<EventsProvider>().getEvents());
+    if(map.isNotEmpty) {
+      storage.setString('mapData',map);
+    }
   }
 
   @override
   void dispose() {
     _selectedEvents.dispose();
+    _textEditingController.clear();
     super.dispose();
   }
 
@@ -53,8 +76,9 @@ class _CalendarPageState extends State<CalendarPage> {
   }
 
   List _getEventsForDay(DateTime day) {
-    Map<DateTime, List> events = context.read<EventsProvider>().getEvents();
-    return events[day] ?? [];
+    String dayT=DateFormat('yy/MM/dd').format(day);
+    Map<String, dynamic> events = context.read<EventsProvider>().getEvents();
+    return events[dayT]??[];
   }
 
   @override
@@ -126,17 +150,18 @@ class _CalendarPageState extends State<CalendarPage> {
                   markerBuilder: (context,day,events) {
                     if(events.isNotEmpty) {
                       List iconEvents = events;
+                      print(iconEvents);
                       return ListView.builder(
                           shrinkWrap: true,
                           scrollDirection: Axis.horizontal,
                           itemCount: events.length,
                           itemBuilder: (context,index) {
                             Map key = iconEvents[index];
-                            if(key.containsKey(1)) {
+                            if(key['iconIndex'] == 1) {
                               return Container(margin: EdgeInsets.only(top: 40.h), child: Icon(size: 20.sp,Icons.pets_outlined, color: Colors.purpleAccent,));
-                            } else if(key.containsKey(2)){
+                            } else if(key['iconIndex'] == 2){
                               return Container(margin: EdgeInsets.only(top: 40.h),child: Icon(size: 20.sp,Icons.rice_bowl_outlined, color: Colors.teal,));
-                            } else if(key.containsKey(3)) {
+                            } else if(key['iconIndex'] == 3) {
                               return Container(margin: EdgeInsets.only(top: 40.h),child: Icon(size: 20.sp,Icons.water_drop_outlined, color: Colors.redAccent,));
                             }
                           }
@@ -177,7 +202,7 @@ class _CalendarPageState extends State<CalendarPage> {
                     itemCount: value.length < 3 ? value.length : 3,
                     itemBuilder: (context,index) {
                       Map event_icon_index = value[index];
-                      if(event_icon_index.containsKey(1)){
+                      if(event_icon_index['iconIndex'] == 1){
                         return Container(
                           margin: const EdgeInsets.symmetric(
                             horizontal: 12.0,
@@ -191,15 +216,15 @@ class _CalendarPageState extends State<CalendarPage> {
                             onLongPress: () {
                               context.read<EventsProvider>().deleteEvents(_selectedDay,index);
                             },
-                            title: Text('${event_icon_index[1]}'),
+                            title: Text('${event_icon_index['contents']}'),
                             trailing: Icon(
-                              Icons.favorite_outline,
+                              Icons.pets_outlined,
                               color: Colors.purpleAccent,
                             ),
                           ),
                         );
                       }
-                      if(event_icon_index.containsKey(2)) {
+                      if(event_icon_index['iconIndex'] == 2) {
                         return Container(
                           margin: const EdgeInsets.symmetric(
                             horizontal: 12.0,
@@ -215,15 +240,15 @@ class _CalendarPageState extends State<CalendarPage> {
                                 context.read<EventsProvider>().deleteEvents(_selectedDay,index);
                               });
                             },
-                            title: Text('${event_icon_index[2]}'),
+                            title: Text('${event_icon_index['contents']}'),
                             trailing: Icon(
-                              Icons.person_outline,
+                              Icons.rice_bowl_outlined,
                               color: Colors.teal,
                             ),
                           ),
                         );
                       }
-                      if(event_icon_index.containsKey(3)){
+                      if(event_icon_index['iconIndex'] == 3){
                         return Container(
                           margin: const EdgeInsets.symmetric(
                             horizontal: 12.0,
@@ -239,7 +264,7 @@ class _CalendarPageState extends State<CalendarPage> {
                                 context.read<EventsProvider>().deleteEvents(_selectedDay,index);
                               });
                             },
-                            title: Text('${event_icon_index[3]}'),
+                            title: Text('${event_icon_index['contents']}'),
                             trailing: Icon(
                               Icons.water_drop_outlined,
                               color: Colors.redAccent,
@@ -318,7 +343,7 @@ class _CalendarPageState extends State<CalendarPage> {
                                       borderRadius: BorderRadius.all(Radius.circular(10))
                                   ),
                                   child: Icon(
-                                    Icons.favorite_outline,
+                                    Icons.pets_outlined,
                                     color: _color1,
                                     size: 50.sp,
                                   ),
@@ -346,7 +371,7 @@ class _CalendarPageState extends State<CalendarPage> {
                                       borderRadius: BorderRadius.all(Radius.circular(10))
                                   ),
                                   child: Icon(
-                                    Icons.person_outline,
+                                    Icons.rice_bowl_outlined,
                                     color: _color2,
                                     size: 50.sp,
                                   ),
@@ -430,7 +455,8 @@ class _CalendarPageState extends State<CalendarPage> {
                                   _color3 = Colors.grey;
                                   _textEditingController.clear();
                                   selectMarker = 0;
-                                  Navigator.pushReplacementNamed(context,'/calendar');
+                                  saveData();
+                                  Navigator.pushReplacementNamed(context,'/pageRouter');
                                 }
                               }
                             } else {

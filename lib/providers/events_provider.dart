@@ -1,32 +1,39 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class EventsProvider extends ChangeNotifier{
   DateTime? day;
-  Map<DateTime, List> events = {};
+  Map<String, dynamic> events = {};
+
+  loadEvents(Map<String,dynamic> a) {
+    print(a.runtimeType);
+    events.addAll(a);
+  }
 
   getEvents() {
     return events;
   }
-  
+
   setEvents(day,contents,iconIndex) {
-    Map<int, String> eventsContents = { iconIndex: '$contents' };
-    if(events.containsKey(day)) {
-      if(events[day]!.length < 3) {
-        events[day]!.add(eventsContents);
+    String dayData= DateFormat('yy/MM/dd').format(day);
+    Map<String, dynamic> eventsContents = { "iconIndex": iconIndex, "contents": '$contents' };
+    if(events.containsKey(dayData)) {
+      if(events[dayData]!.length < 3) {
+        events[dayData]!.add(eventsContents);
       } else {
         return '초과';
       }
     } else {
-      List evnets_list = [];
-      Map<DateTime, List> selected_events = { day: evnets_list};
-      evnets_list.add(eventsContents);
-      events.addAll(selected_events);
+      List eventsList = [];
+      Map<String, dynamic> selectedEvents = { dayData: eventsList };
+      eventsList.add(eventsContents);
+      events.addAll(selectedEvents);
     }
     notifyListeners();
   }
 
-  deleteEvents(seletedDay,index) {
-    List evenstList = events[seletedDay]!;
-    evenstList.removeAt(index);
+  deleteEvents(selectedDay,index) {
+    List eventsList = events[selectedDay]!;
+    eventsList.removeAt(index);
   }
 }
