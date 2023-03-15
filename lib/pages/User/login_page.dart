@@ -185,7 +185,7 @@ class LoginPage extends StatelessWidget {
                   ),
                   GestureDetector(
                     onTap: () {
-                      Navigator.pushReplacementNamed(context, '/signUp');
+                      Navigator.pushNamed(context, '/signUp');
                     },
                     child: Container(
                       height: 65.h,
