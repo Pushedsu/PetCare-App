@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 import 'package:pet_care/providers/events_provider.dart';
+import 'package:pet_care/providers/user_info_provider.dart';
 import 'package:pet_care/widgets/text_field.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -41,8 +42,8 @@ class _CalendarPageState extends State<CalendarPage> {
 
   loadData() async {
     final storage = await SharedPreferences.getInstance();
-    String storageData = storage.getString('mapData') ?? 'nothing';
-    if(storageData == 'nothing') {
+    String storageData = storage.getString('${context.read<UserInfoProvider>().getName()}') ?? 'loaded data nothing';
+    if(storageData == 'loaded data nothing') {
       print(storageData);
     } else {
       var loadMapData = jsonDecode(storageData);
@@ -54,7 +55,7 @@ class _CalendarPageState extends State<CalendarPage> {
     final storage = await SharedPreferences.getInstance();
     String map = jsonEncode(context.read<EventsProvider>().getEvents());
     if(map.isNotEmpty) {
-      storage.setString('mapData',map);
+      storage.setString('${context.read<UserInfoProvider>().getName()}',map);
     }
   }
 
@@ -87,6 +88,24 @@ class _CalendarPageState extends State<CalendarPage> {
       body: SafeArea(
         child: Column(
           children: [
+            Container(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.calendar_month_outlined,size: 50.sp,color: Colors.teal,),
+                  SizedBox(width: 10.w,),
+                  Text(
+                    '애견 일정표',
+                    style: TextStyle(
+                        fontSize: 40.sp,
+                        color: Colors.teal,
+                        fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: 10.h,),
             Card(
               margin: EdgeInsets.all(8.0),
               elevation: 5.0,
@@ -215,6 +234,7 @@ class _CalendarPageState extends State<CalendarPage> {
                           child: ListTile(
                             onLongPress: () {
                               context.read<EventsProvider>().deleteEvents(_selectedDay,index);
+                              saveData();
                             },
                             title: Text('${event_icon_index['contents']}'),
                             trailing: Icon(
@@ -238,6 +258,7 @@ class _CalendarPageState extends State<CalendarPage> {
                             onLongPress: () {
                               setState(() {
                                 context.read<EventsProvider>().deleteEvents(_selectedDay,index);
+                                saveData();
                               });
                             },
                             title: Text('${event_icon_index['contents']}'),
@@ -262,6 +283,7 @@ class _CalendarPageState extends State<CalendarPage> {
                             onLongPress: () {
                               setState(() {
                                 context.read<EventsProvider>().deleteEvents(_selectedDay,index);
+                                saveData();
                               });
                             },
                             title: Text('${event_icon_index['contents']}'),
