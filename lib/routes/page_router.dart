@@ -12,7 +12,6 @@ import '../module/user/token_model.dart';
 import '../module/user/user_model.dart';
 import '../pages/Bulletin/bulletin_board_page.dart';
 import '../pages/Calendar/calendar_page.dart';
-import '../pages/main_page.dart';
 import '../providers/user_info_provider.dart';
 
 class PageRouter extends StatefulWidget {
@@ -96,9 +95,9 @@ class _PageRouterState extends State<PageRouter> {
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(
-              Icons.home_sharp,
+              Icons.calendar_month_outlined,
             ),
-            label: "홈",
+            label: "캘린더",
           ),
           BottomNavigationBarItem(
               icon: Icon(
