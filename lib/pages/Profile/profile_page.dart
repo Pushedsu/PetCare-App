@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:pet_care/providers/events_provider.dart';
 import 'package:provider/provider.dart';
 
 import '../../connect/connect_server.dart';
@@ -85,7 +86,9 @@ class ProfilePage extends StatelessWidget {
                 height: 20.h,
               ),
               GestureDetector(
-                onTap: () {},
+                onTap: () {
+                  Navigator.pushNamed(context, '/myPost');
+                },
                 child: Container(
                   height: 65.h,
                   width: 400.w,
@@ -123,6 +126,7 @@ class ProfilePage extends StatelessWidget {
                     ResIsBoolSuccessModel res = ResIsBoolSuccessModel.fromJson(jsonDecode(response.body));
                     print('로그아웃 api 성공 여부: ${res.success}');
                     storage.deleteAll();
+                    context.read<EventsProvider>().removeEvents();
                     Navigator.pushNamed(context, '/login');
                   } else {
                     ResIsBoolFail res = ResIsBoolFail.fromJson(jsonDecode(response.body));

@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:pet_care/pages/Calendar/calendar_page.dart';
 import 'package:pet_care/pages/Profile/delete_account_page.dart';
+import 'package:pet_care/pages/Profile/my_posts_page.dart';
 import 'package:pet_care/providers/events_provider.dart';
 import 'package:pet_care/providers/on_off_provider.dart';
 import 'package:pet_care/providers/page_index_provider.dart';
@@ -42,6 +43,7 @@ class MyApp extends StatelessWidget {
             home: PageRouter(),
             initialRoute: '/',
             routes: {
+              '/myPost': (context)=> MyPosts(),
               '/delete': (context)=> DeleteAccountPage(),
               '/post': (context) => PostPage(),
               '/pageRouter': (context) => PageRouter(),

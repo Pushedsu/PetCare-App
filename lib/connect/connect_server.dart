@@ -24,7 +24,15 @@ class Get {
     );
     return response;
   }
-
+  Future<http.Response> getMyPosts(String id) async{
+    final response = await http.get(
+      Uri.parse('http://${appConstants.UriIp}:3000/posts/${id}'),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+      },
+    );
+    return response;
+  }
   // Future<AllUserData> getAllUser() async {
   //   final response = await http.get(
   //     Uri.parse('http://${appConstants.UriIp}:3000/user/all'),
