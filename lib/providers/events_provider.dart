@@ -6,8 +6,11 @@ class EventsProvider extends ChangeNotifier{
   Map<String, dynamic> events = {};
 
   loadEvents(Map<String,dynamic> a) {
-    print(a.runtimeType);
     events.addAll(a);
+  }
+
+  removeEvents() {
+    events.clear();
   }
 
   getEvents() {
@@ -33,7 +36,8 @@ class EventsProvider extends ChangeNotifier{
   }
 
   deleteEvents(selectedDay,index) {
-    List eventsList = events[selectedDay]!;
+    String dayData= DateFormat('yy/MM/dd').format(selectedDay);
+    List eventsList = events[dayData]!;
     eventsList.removeAt(index);
   }
 }
