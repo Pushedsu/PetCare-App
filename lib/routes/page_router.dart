@@ -6,12 +6,14 @@ import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:pet_care/pages/Profile/profile_page.dart';
 import 'package:pet_care/providers/page_index_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../connect/connect_server.dart';
 import '../module/response/response_model.dart';
 import '../module/user/token_model.dart';
 import '../module/user/user_model.dart';
 import '../pages/Bulletin/bulletin_board_page.dart';
 import '../pages/Calendar/calendar_page.dart';
+import '../providers/events_provider.dart';
 import '../providers/user_info_provider.dart';
 
 class PageRouter extends StatefulWidget {
@@ -39,11 +41,29 @@ class _PageRouterState extends State<PageRouter> {
     });
   }
 
+  loadData() async {
+    final storage = await SharedPreferences.getInstance();
+    print(context.read<UserInfoProvider>().getName());
+    String storageData = storage.getString('${context.read<UserInfoProvider>().getName()}') ?? 'loaded data nothing';
+    if(storageData == 'loaded data nothing') {
+      print(storageData);
+    } else {
+      var loadMapData = jsonDecode(storageData);
+      print('로드...$loadMapData');
+      context.read<EventsProvider>().loadEvents(loadMapData);
+    }
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    _init();
+    asyncMethod();
+  }
+
+  asyncMethod() async{
+    await _init();
+    await loadData();
   }
 
   _init() async {
@@ -88,9 +108,7 @@ class _PageRouterState extends State<PageRouter> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        child: _widgetOptions.elementAt(context.read<PageIndexProvider>().pageIndex),
-      ),
+      body: _widgetOptions.elementAt(context.read<PageIndexProvider>().pageIndex),
       bottomNavigationBar: BottomNavigationBar(
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(

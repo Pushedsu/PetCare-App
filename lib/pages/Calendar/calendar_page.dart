@@ -35,20 +35,8 @@ class _CalendarPageState extends State<CalendarPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    loadData();
     _selectedDay = _focusedDay;
     _selectedEvents = ValueNotifier(_getEventsForDay(_selectedDay!));
-  }
-
-  loadData() async {
-    final storage = await SharedPreferences.getInstance();
-    String storageData = storage.getString('${context.read<UserInfoProvider>().getName()}') ?? 'loaded data nothing';
-    if(storageData == 'loaded data nothing') {
-      print(storageData);
-    } else {
-      var loadMapData = jsonDecode(storageData);
-      context.read<EventsProvider>().loadEvents(loadMapData);
-    }
   }
 
   saveData() async{
@@ -169,7 +157,6 @@ class _CalendarPageState extends State<CalendarPage> {
                   markerBuilder: (context,day,events) {
                     if(events.isNotEmpty) {
                       List iconEvents = events;
-                      print(iconEvents);
                       return ListView.builder(
                           shrinkWrap: true,
                           scrollDirection: Axis.horizontal,
