@@ -54,7 +54,9 @@ class ProfilePage extends StatelessWidget {
                 height: 60.h,
               ),
               GestureDetector(
-                onTap: () {},
+                onTap: () {
+                  Navigator.pushNamed(context, '/memberEdit');
+                },
                 child: Container(
                   height: 65.h,
                   width: 400.w,
