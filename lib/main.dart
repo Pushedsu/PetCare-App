@@ -3,7 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:pet_care/pages/Calendar/calendar_page.dart';
+import 'package:pet_care/pages/Profile/change_nickname_page.dart';
+import 'package:pet_care/pages/Profile/change_password_page.dart';
 import 'package:pet_care/pages/Profile/delete_account_page.dart';
+import 'package:pet_care/pages/Profile/member_edit_page.dart';
 import 'package:pet_care/pages/Profile/my_posts_page.dart';
 import 'package:pet_care/providers/events_provider.dart';
 import 'package:pet_care/providers/on_off_provider.dart';
@@ -49,6 +52,9 @@ class MyApp extends StatelessWidget {
               '/pageRouter': (context) => PageRouter(),
               '/createPost': (context) => CreatePostPage(),
               '/bulletin': (context) => BulletinBoardPage(),
+              '/memberEdit': (context)=> MemberEditPage(),
+              '/changeNickname': (context)=> ChangeNicknamePage(),
+              '/changePassword': (context)=>ChangePasswordPage(),
               '/login': (context) => LoginPage(),
               '/signUp': (context) => SignUpPage(),
               '/main': (context) => MainPage(),
