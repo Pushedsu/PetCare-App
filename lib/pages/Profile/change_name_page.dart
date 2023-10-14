@@ -1,14 +1,23 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:pet_care/utils/app_constants.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:pet_care/connect/connect_server.dart';
+import 'package:provider/provider.dart';
 
+import '../../module/response/response_model.dart';
+import '../../module/user/user_model.dart';
+import '../../providers/user_info_provider.dart';
 import '../../widgets/text_field.dart';
 
 class ChangeNamePage extends StatelessWidget {
-  TextEditingController nicknameController = TextEditingController();
+  TextEditingController nameController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
+    UserInfoProvider userInfoProvider = Provider.of<UserInfoProvider>(context);
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Container(
@@ -79,7 +88,7 @@ class ChangeNamePage extends StatelessWidget {
                     margin: EdgeInsets.only(left: 37.w, right: 37.w), //바깥쪽 여백
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      '새로운 닉네임을 입력하시오.',
+                      '변경할 이름을 입력하시오.',
                       style: TextStyle(
                         color: Colors.teal,
                         fontWeight: FontWeight.bold,
@@ -90,16 +99,64 @@ class ChangeNamePage extends StatelessWidget {
                   Container(
                     margin: EdgeInsets.only(left: 37.w, right: 37.w), //바깥쪽 여백
                     child: CustomTextField(
-                      controller: nicknameController,
-                      text: '닉네임',
-                      hintText: '닉네임 입력',
+                      controller: nameController,
+                      text: '이름',
+                      hintText: '이름 입력',
                     ),
                   ),
                   SizedBox(
                     height: 60.h,
                   ),
                   GestureDetector(
-                    onTap: () {},
+                    onTap: () async {
+                      if (nameController.text.length < 2 && !appConstants.nameRegExp
+                              .hasMatch(nameController.text)) {
+                        showDialog(
+                            context: context,
+                            builder: (BuildContext context) => AlertDialog(
+                              shape: RoundedRectangleBorder(
+                                borderRadius:
+                                BorderRadius.circular(10.0),
+                              ),
+                              title: Text('Name Error'),
+                              content:
+                              Text('2자 이상 20자 이하, 영어 또는 숫자로 구성하시오'),
+                              actions: <Widget>[
+                                TextButton(
+                                    onPressed: () =>
+                                        Navigator.pop(context),
+                                    child: Text('Ok')),
+                              ],
+                            ));
+                        nameController.clear();
+                      } else{
+                        var posting = UserUpdateNameModel(userInfoProvider.getObjId(),nameController.text).toJson();
+                        var response = await Post().updateName(posting);
+                        if(response.statusCode == 201) {
+                          ResIsBoolSuccessModel post = ResIsBoolSuccessModel.fromJson(jsonDecode(response.body));
+                          print('이름 재설정 성공! ${post.success}');
+                          Navigator.pushReplacementNamed(context,'/pageRouter');
+                        } else {
+                          ResIsBoolFailList post = ResIsBoolFailList.fromJson(jsonDecode(response.body));
+                          showDialog(
+                              context: context,
+                              builder: (BuildContext context) => AlertDialog(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                ),
+                                title: Text('다시 입력하시오'),
+                                content: Text('${post.message![0]}...'),
+                                actions: <Widget>[
+                                  TextButton(
+                                      onPressed: () => Navigator.pop(context),
+                                      child: Text('Ok')),
+                                ],
+                              )
+                          );
+                          nameController.clear();
+                        }
+                      }
+                    },
                     child: Container(
                       margin: EdgeInsets.only(left: 37.w, right: 37.w), //바깥쪽 여백
                       child: Container(
