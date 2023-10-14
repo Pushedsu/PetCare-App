@@ -39,25 +39,33 @@ class ResIsBoolFail {
   }
 }
 
-class ResIsBoolFailLIst {
+class ResIsBoolFailList {
   bool? success;
   String? timestamp;
   int? statusCode;
   List<String>? message;
   String? error;
 
-  ResIsBoolFailLIst(
+  ResIsBoolFailList(
       {this.success,
         this.timestamp,
         this.statusCode,
         this.message,
         this.error});
 
-  ResIsBoolFailLIst.fromJson(Map<String, dynamic> json) {
+  ResIsBoolFailList.fromJson(Map<String, dynamic> json) {
     success = json['success'];
     timestamp = json['timestamp'];
     statusCode = json['statusCode'];
-    message = json['message'].cast<String>();
+    // JSON 데이터에서 "message" 필드가 문자열 또는 문자열 목록인지 확인
+    dynamic messageData = json['message'];
+    if (messageData is String) {
+      // 문자열인 경우 문자열 필드에 할당
+      message = <String>[messageData];
+    } else if (messageData is List<dynamic>) {
+      // 문자열 목록인 경우 그대로 할당
+      message = messageData.cast<String>();
+    }
     error = json['error'];
   }
 
