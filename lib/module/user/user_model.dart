@@ -63,3 +63,29 @@ class PasswordToJsonModel {
     'password': password,
   };
 }
+
+class UserUpdateNameModel {
+  String id;
+  String name;
+
+  UserUpdateNameModel(this.id, this.name);
+
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'name': name,
+  };
+}
+
+class UserUpdatePasswordModel {
+  String id;
+  String password;
+  String currentPassword;
+
+  UserUpdatePasswordModel(this.id, this.password,this.currentPassword);
+
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'password': password,
+    'currentPassword': currentPassword,
+  };
+}
