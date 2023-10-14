@@ -62,7 +62,7 @@ class CreatePostPage extends StatelessWidget {
                             print('새글 저장 api 통신 성공! ${post.success}');
                             Navigator.pushReplacementNamed(context, '/pageRouter');
                           } else {
-                            ResIsBoolFailLIst post = ResIsBoolFailLIst.fromJson(jsonDecode(response.body));
+                            ResIsBoolFailList post = ResIsBoolFailList.fromJson(jsonDecode(response.body));
                             showDialog(
                                 context: context,
                                 builder: (BuildContext context) => AlertDialog(
