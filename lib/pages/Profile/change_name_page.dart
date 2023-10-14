@@ -4,7 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../widgets/text_field.dart';
 
-class ChangeNicknamePage extends StatelessWidget {
+class ChangeNamePage extends StatelessWidget {
   TextEditingController nicknameController = TextEditingController();
 
   @override
