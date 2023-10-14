@@ -1,9 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-import '../../widgets/text_field.dart';
 
 class MemberEditPage extends StatelessWidget {
 
@@ -83,7 +81,7 @@ class MemberEditPage extends StatelessWidget {
                       width: 400.w,
                       child: Center(
                         child: Text(
-                          '닉네임 변경',
+                          '이름 변경',
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 20.sp,
