@@ -113,6 +113,26 @@ class Post {
     );
     return response;
   }
+  Future<http.Response> updateName(Map<String, dynamic> data) async{
+    final response = await http.post(
+      Uri.parse('http://${appConstants.UriIp}:3000/user/updateName'),
+      headers: <String, String>{
+      'Content-Type': 'application/json',
+      },
+      body: jsonEncode(data),
+    );
+    return response;
+  }
+  Future<http.Response> updatePassword(Map<String, dynamic> data) async{
+    final response = await http.post(
+      Uri.parse('http://${appConstants.UriIp}:3000/user/updatePassword'),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode(data),
+    );
+    return response;
+  }
 }
 
 class Delete {
