@@ -97,6 +97,7 @@ class _PageRouterState extends State<PageRouter> {
       obj_id = info.data.id;
       Provider.of<UserInfoProvider>(context,listen: false).setObjId(obj_id);
       Provider.of<UserInfoProvider>(context,listen: false).setName(info.data.name);
+      Provider.of<UserInfoProvider>(context,listen: false).setImgUrl(info.data.image);
     } else {
       print('로그인된 현재 유저 정보를 불러오지 못했습니다');
       ResIsBoolFail res = ResIsBoolFail.fromJson(jsonDecode(response.body));

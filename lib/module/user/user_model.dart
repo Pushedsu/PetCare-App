@@ -16,14 +16,16 @@ class Data {
   final String id;
   final String name;
   final String email;
+  final String image;
 
-  Data({required this.id,required this.name,required this.email});
+  Data({required this.id,required this.name,required this.email,required this.image});
 
   factory Data.fromJson(Map<String, dynamic> json, ) {
     return Data(
-        email: json['email'],
-        name: json['name'],
-        id: json['id'],
+        email: json['email'] ?? '',
+        name: json['name'] ?? '',
+        id: json['id'] ?? '',
+        image: json['image'] ?? '',
     );
   }
 }
@@ -87,5 +89,15 @@ class UserUpdatePasswordModel {
     'id': id,
     'password': password,
     'currentPassword': currentPassword,
+  };
+}
+
+class UserDeleteProfileImgModel {
+  String key;
+
+  UserDeleteProfileImgModel(this.key);
+
+  Map<String, dynamic> toJson() => {
+    'key': key,
   };
 }

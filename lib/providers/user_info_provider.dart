@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 class UserInfoProvider with ChangeNotifier{
   String _objId = '';
   String _name = '';
+  String _imgUrl = '';
 
   getObjId() => _objId;
 
@@ -15,6 +16,13 @@ class UserInfoProvider with ChangeNotifier{
 
   setName(String name) {
     _name = name;
+    notifyListeners();
+  }
+
+  getImgUrl() => _imgUrl;
+
+  setImgUrl(String imgUrl) {
+    _imgUrl = imgUrl;
     notifyListeners();
   }
 }
