@@ -95,3 +95,15 @@ class PostingModel {
     return data;
   }
 }
+
+class SearchModel {
+  String? text;
+
+  SearchModel(this.text);
+
+  Map<String,dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['text'] = this.text;
+    return data;
+  }
+}
