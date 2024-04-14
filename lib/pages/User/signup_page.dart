@@ -16,17 +16,19 @@ class SignUpPage extends StatefulWidget {
 
 class _SignUpPageState extends State<SignUpPage> {
   TextEditingController nameController = TextEditingController();
-  TextEditingController idController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController confirmPasswordController = TextEditingController();
+  TextEditingController emailConfirmController = TextEditingController();
 
   String inputName = '';
   String nameButtonText = 'Unfinished';
+  String emailConfirm = '이메일 인증';
 
   @override
   void dispose() {
     nameController.clear();
-    idController.clear();
+    emailController.clear();
     passwordController.clear();
     confirmPasswordController.clear();
     // TODO: implement dispose
@@ -88,7 +90,7 @@ class _SignUpPageState extends State<SignUpPage> {
                       ),
                       Container(
                         child: Text(
-                          'Sign Up',
+                          '회 원 가 입',
                           style: TextStyle(
                             color: Colors.teal,
                             fontWeight: FontWeight.bold,
@@ -103,7 +105,7 @@ class _SignUpPageState extends State<SignUpPage> {
                         margin: EdgeInsets.only(left: 37.w, right: 37.w), //바깥쪽 여백
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          'Create Your Account',
+                          '회원 정보 입력',
                           style: TextStyle(
                             color: Colors.teal,
                             fontWeight: FontWeight.bold,
@@ -194,10 +196,90 @@ class _SignUpPageState extends State<SignUpPage> {
                       //email 필드
                       Container(
                         margin: EdgeInsets.only(left: 37.w, right: 37.w), //바깥쪽 여백
-                        child: CustomTextField(
-                          controller: idController,
-                          text: 'Email',
-                          hintText: '아이디 입력',
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Container(
+                              width: 200.w,
+                              height: 60.h,
+                              child: CustomTextField(
+                                controller: emailController,
+                                text: 'Email',
+                                hintText: 'Email 입력',
+                              ),
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                if (emailController.text.length < 6 ||
+                                    !appConstants.emailRegExp.hasMatch(emailController.text)) {
+                                  showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) => AlertDialog(
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(10.0),
+                                        ),
+                                        title: Text('Email Error'),
+                                        content:
+                                        Text('영문자로 시작하고 숫자를 포함하여 총 6~20자 입력하시오'),
+                                        actions: <Widget>[
+                                          TextButton(
+                                              onPressed: () => Navigator.pop(context),
+                                              child: Text('Ok')),
+                                        ],
+                                      ));
+                                  emailController.clear();
+                                } else {
+                                  showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) => AlertDialog(
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(10.0),
+                                        ),
+                                        title: Text('인증번호 입력'),
+                                        content: CustomTextField(
+                                          controller: emailConfirmController,
+                                          text: '인증번호',
+                                          hintText: '인증번호 입력',
+                                        ),
+                                        actions: <Widget>[
+                                          TextButton(
+                                              onPressed: () => {
+                                                Navigator.pop(context),
+                                              },
+                                              child: Text('Ok')),
+                                        ],
+                                      ));
+                                  emailConfirmController.clear();
+                                }
+                              },
+                              child: Container(
+                                width: 130.w,
+                                height: 60.h,
+                                decoration: BoxDecoration(
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.grey.withOpacity(0.7),
+                                        spreadRadius: 0,
+                                        blurRadius: 5.0,
+                                        offset: Offset(0, 10), // changes position of shadow
+                                      ),
+                                    ],
+                                    color: Colors.teal,
+                                    borderRadius:
+                                    BorderRadius.all(Radius.circular(10))),
+                                child: Center(
+                                  child: Text(
+                                    emailConfirm,
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 20.sp,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                       SizedBox(height: 40.h,),
@@ -225,11 +307,11 @@ class _SignUpPageState extends State<SignUpPage> {
                         ),
                       ),
                       SizedBox(height: 20.h,),
-                      //sign up 버튼
+                      //가입하기 버튼
                       GestureDetector(
                         onTap: () async {
-                          if (idController.text.length < 6 ||
-                              !appConstants.emailRegExp.hasMatch(idController.text)) {
+                          if (emailController.text.length < 6 ||
+                              !appConstants.emailRegExp.hasMatch(emailController.text)) {
                             showDialog(
                                 context: context,
                                 builder: (BuildContext context) => AlertDialog(
@@ -245,7 +327,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                         child: Text('Ok')),
                                   ],
                                 ));
-                            idController.clear();
+                            emailController.clear();
                           } else if (passwordController.text.length < 8 ||
                               !appConstants.passwordRegExp
                                   .hasMatch(passwordController.text)) {
@@ -284,7 +366,7 @@ class _SignUpPageState extends State<SignUpPage> {
                             passwordController.clear();
                             confirmPasswordController.clear();
                           } else {
-                            var user = UserAccountModel(idController.text, nameController.text, passwordController.text).toJson();
+                            var user = UserAccountModel(emailController.text, nameController.text, passwordController.text).toJson();
                             var response = await Post().signUp(user);
                             if(response.statusCode == 201 ) {
                               ResIsBoolSuccessModel res = ResIsBoolSuccessModel.fromJson(jsonDecode(response.body));
@@ -307,7 +389,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                     ],
                                   )
                               );
-                              idController.clear();
+                              emailController.clear();
                               nameController.clear();
                               passwordController.clear();
                               confirmPasswordController.clear();
@@ -334,7 +416,7 @@ class _SignUpPageState extends State<SignUpPage> {
                             ),
                             child: Center(
                               child: Text(
-                                'Sign Up',
+                                '가 입 하 기',
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 20.sp,
