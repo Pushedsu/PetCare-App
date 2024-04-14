@@ -234,7 +234,7 @@ class LoginPage extends StatelessWidget {
                             ),
                             actions: <Widget>[
                               TextButton(
-                                  onPressed: () => Navigator.pop(context),
+                                  onPressed: () => Na현vigator.pop(context),
                                   child: Text('Ok')),
                             ],
                           )
