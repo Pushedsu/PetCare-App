@@ -13,6 +13,7 @@ import '../../widgets/text_field.dart';
 class LoginPage extends StatelessWidget {
   TextEditingController idController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  TextEditingController emailConfirmController = TextEditingController();
   String id = '';
   static final storage = FlutterSecureStorage();
 
@@ -46,7 +47,7 @@ class LoginPage extends StatelessWidget {
                     ),
                     child: Center(
                       child: Text(
-                        'LogIn',
+                        '로그인',
                         style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
@@ -157,7 +158,7 @@ class LoginPage extends StatelessWidget {
                       width: 400.w,
                       child: Center(
                         child: Text(
-                          'Sign  In',
+                          '로그인',
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 20.sp,
@@ -192,7 +193,7 @@ class LoginPage extends StatelessWidget {
                       width: 400.w,
                       child: Center(
                         child: Text(
-                          'Sign Up',
+                          '회원가입',
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 20.sp,
@@ -207,12 +208,44 @@ class LoginPage extends StatelessWidget {
                               color: Colors.grey.withOpacity(0.7),
                               spreadRadius: 0,
                               blurRadius: 5.0,
-                              offset:
-                              Offset(0, 10), // changes position of shadow
+                              offset: Offset(0, 10), // changes position of shadow
                             ),
                           ],
                           color: Colors.teal,
                           borderRadius: BorderRadius.all(Radius.circular(10))),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 20.h,
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      showDialog(
+                          context: context,
+                          builder: (BuildContext context) => AlertDialog(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                            title: Text('이메일을 입력하시오.'),
+                            content: CustomTextField(
+                              controller: emailConfirmController,
+                              text: '이메일 확인',
+                              hintText: '이메일 입력',
+                            ),
+                            actions: <Widget>[
+                              TextButton(
+                                  onPressed: () => Navigator.pop(context),
+                                  child: Text('Ok')),
+                            ],
+                          )
+                      );
+                    },
+                    child: Text(
+                      "비밀번호찾기",
+                      style: TextStyle(
+                        fontSize: 20.sp,
+                        decoration: TextDecoration.underline,
+                      ),
                     ),
                   ),
                 ],

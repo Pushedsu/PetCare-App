@@ -170,6 +170,16 @@ class Post {
     );
     return response;
   }
+  Future<http.Response> findPassword(Map<String, dynamic> data) async{
+    final response = await http.post(
+      Uri.parse('http://${env.UriIp}:3000/user/findPassword'),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode(data),
+    );
+    return response;
+  }
 }
 
 class Delete {
