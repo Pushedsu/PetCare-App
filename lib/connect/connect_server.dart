@@ -190,6 +190,48 @@ class Post {
     );
     return response;
   }
+  Future<http.Response> sendVerification(Map<String, dynamic> data) async{
+    final response = await http.post(
+      Uri.parse('http://${env.UriIp}:3000/user/sendVerification'),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode(data),
+    );
+    return response;
+  }
+
+  Future<http.Response> verifyEmail(Map<String, dynamic> data) async{
+    final response = await http.post(
+      Uri.parse('http://${env.UriIp}:3000/user/verifyEmail'),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode(data),
+    );
+    return response;
+  }
+  Future<http.Response> findPasswordByEmail(Map<String, dynamic> data) async{
+    final response = await http.post(
+      Uri.parse('http://${env.UriIp}:3000/user/findPassword'),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode(data),
+    );
+    return response;
+  }
+
+  Future<http.Response> createReport(Map<String, dynamic> data) async{
+    final response = await http.post(
+      Uri.parse('http://${env.UriIp}:3000/admin/createReport'),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode(data),
+    );
+    return response;
+  }
 }
 
 class Delete {

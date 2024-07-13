@@ -107,3 +107,113 @@ class SearchModel {
     return data;
   }
 }
+
+class emailSend {
+  String? email;
+
+  emailSend(this.email);
+
+  Map<String,dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['email'] = this.email;
+    return data;
+  }
+}
+
+class emailCheck {
+  String? email;
+  String? code;
+
+  emailCheck(this.email,this.code);
+
+  Map<String,dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['email'] = this.email;
+    data['code'] = this.code;
+    return data;
+  }
+}
+
+class emailVerify {
+
+  final bool success;
+  final emailVerifyData data;
+
+  emailVerify({required this.success,required this.data});
+
+  factory emailVerify.fromJson(Map<String,dynamic> json) {
+    return emailVerify(
+      success: json['success'],
+      data: emailVerifyData.fromJson(json['data']),
+    );
+  }
+}
+
+class emailVerifyData {
+  final String message;
+
+  emailVerifyData({required this.message});
+
+  factory emailVerifyData.fromJson(Map<String, dynamic> json, ) {
+    return emailVerifyData(
+      message: json['message'],
+    );
+  }
+}
+
+class findPasswordByEmail {
+  String? email;
+
+  findPasswordByEmail(this.email);
+
+  Map<String,dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['email'] = this.email;
+    return data;
+  }
+}
+
+class findPassword {
+
+  final bool success;
+  final findPasswordData data;
+
+  findPassword({required this.success,required this.data});
+
+  factory findPassword.fromJson(Map<String,dynamic> json) {
+    return findPassword(
+      success: json['success'],
+      data: findPasswordData.fromJson(json['data']),
+    );
+  }
+}
+
+class findPasswordData {
+  final String message;
+
+  findPasswordData({required this.message});
+
+  factory findPasswordData.fromJson(Map<String, dynamic> json, ) {
+    return findPasswordData(
+      message: json['email'],
+    );
+  }
+}
+
+class createReportData {
+  String? postId;
+  String? reportName;
+  String? reason;
+  String? contents;
+
+  createReportData(this.postId, this.reportName, this.reason,this.contents);
+
+  Map<String,dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['postId'] = this.postId;
+    data['reporterName'] = this.reportName;
+    data['reason'] = this.reason;
+    data['contents'] = this.contents;
+    return data;
+  }
+}

@@ -7,12 +7,14 @@ class CustomTextField extends StatefulWidget {
   final Color? color;
   final bool? password;
   final TextEditingController controller;
+  final bool? enable;
   const CustomTextField({Key? key,
     required this.text,
     required this.hintText,
     this.color = Colors.black54,
     required this.controller,
-    this.password = false
+    this.password = false,
+    this.enable = true,
   }) : super(key: key);
 
   @override
@@ -26,6 +28,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
       maxLength: 25,
       controller: widget.controller,
       obscureText: widget.password!,
+      enabled: widget.enable,
       decoration: InputDecoration(
         counterText: '',
         labelText: widget.text,

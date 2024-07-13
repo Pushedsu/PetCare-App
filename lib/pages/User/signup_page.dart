@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:pet_care/utils/app_constants.dart';
 import 'package:pet_care/widgets/text_field.dart';
 import '../../connect/connect_server.dart';
+import '../../module/post/post_model.dart';
 import '../../module/response/response_model.dart';
 import '../../module/user/user_model.dart';
 
@@ -22,8 +23,9 @@ class _SignUpPageState extends State<SignUpPage> {
   TextEditingController emailConfirmController = TextEditingController();
 
   String inputName = '';
-  String nameButtonText = 'Unfinished';
+  String nameButtonText = '미입력';
   String emailConfirm = '이메일 인증';
+  bool isEnabled = true;
 
   @override
   void dispose() {
@@ -33,6 +35,71 @@ class _SignUpPageState extends State<SignUpPage> {
     confirmPasswordController.clear();
     // TODO: implement dispose
     super.dispose();
+  }
+
+  Future<void> sendMessageToServer() async {
+    var res_email = emailCheck(emailController.text,emailConfirmController.text).toJson();
+    var response_email = await Post().verifyEmail(res_email);
+    if(response_email.statusCode == 201) {
+      emailVerify res = emailVerify.fromJson(jsonDecode(response_email.body));
+      if(res.data.message == "인증에 성공했습니다.") {
+        Navigator.pop(context);
+        emailConfirmController.clear();
+        setState(() {
+          emailConfirm = '인증 완료';
+          isEnabled = false;
+        });
+      } else if(res.data.message == "인증 번호가 유효하지 않습니다.") {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) => AlertDialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+              title: Text('인증이 번호가 틀립니다.'),
+              actions: <Widget>[
+                TextButton(
+                    onPressed: () => {
+                      Navigator.pop(context),
+                    },
+                    child: Text('Ok')),
+              ],
+            ));
+      } else {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) => AlertDialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+              title: Text('Error'),
+              actions: <Widget>[
+                TextButton(
+                    onPressed: () => {
+                      Navigator.pop(context),
+                    },
+                    child: Text('Ok')),
+              ],
+            ));
+      }
+    } else {
+      showDialog(
+          context: context,
+          builder: (BuildContext context) => AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+            title: Text('Error'),
+            actions: <Widget>[
+              TextButton(
+                  onPressed: () => {
+                    Navigator.pop(context),
+                  },
+                  child: Text('Ok')),
+            ],
+          ));
+    }
+
   }
 
   @override
@@ -154,11 +221,11 @@ class _SignUpPageState extends State<SignUpPage> {
                                         ],
                                       ));
                                   nameController.clear();
-                                  nameButtonText = 'Unfinished';
+                                  nameButtonText = '미입력';
                                 } else {
                                   inputName = nameController.text;
                                   setState(() {
-                                    nameButtonText = 'Done';
+                                    nameButtonText = '입력 완료';
                                   });
                                 }
                               },
@@ -206,10 +273,11 @@ class _SignUpPageState extends State<SignUpPage> {
                                 controller: emailController,
                                 text: 'Email',
                                 hintText: 'Email 입력',
+                                enable: isEnabled,
                               ),
                             ),
                             GestureDetector(
-                              onTap: () {
+                              onTap: () async {
                                 if (emailController.text.length < 6 ||
                                     !appConstants.emailRegExp.hasMatch(emailController.text)) {
                                   showDialog(
@@ -228,28 +296,34 @@ class _SignUpPageState extends State<SignUpPage> {
                                         ],
                                       ));
                                   emailController.clear();
-                                } else {
-                                  showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) => AlertDialog(
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(10.0),
-                                        ),
-                                        title: Text('인증번호 입력'),
-                                        content: CustomTextField(
-                                          controller: emailConfirmController,
-                                          text: '인증번호',
-                                          hintText: '인증번호 입력',
-                                        ),
-                                        actions: <Widget>[
-                                          TextButton(
-                                              onPressed: () => {
-                                                Navigator.pop(context),
-                                              },
-                                              child: Text('Ok')),
-                                        ],
-                                      ));
-                                  emailConfirmController.clear();
+                                } else if(emailConfirm == "이메일 인증") {
+                                  var data = emailSend(emailController.text).toJson();
+                                  var response = await Post().sendVerification(data);
+                                  if(response.statusCode == 201) {
+                                    emailVerify res = emailVerify.fromJson(jsonDecode(response.body));
+                                    if(res.data.message == "인증 번호가 전송되었습니다.") {
+                                      showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) => AlertDialog(
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(10.0),
+                                            ),
+                                            title: Text('인증번호 입력'),
+                                            content: CustomTextField(
+                                              controller: emailConfirmController,
+                                              text: '인증번호',
+                                              hintText: '인증번호 입력',
+                                            ),
+                                            actions: <Widget>[
+                                              TextButton(
+                                                  onPressed: () => {
+                                                    sendMessageToServer(),
+                                                  },
+                                                  child: Text('Ok')),
+                                            ],
+                                          ));
+                                    }
+                                  }
                                 }
                               },
                               child: Container(
@@ -437,5 +511,3 @@ class _SignUpPageState extends State<SignUpPage> {
     );
   }
 }
-
-
