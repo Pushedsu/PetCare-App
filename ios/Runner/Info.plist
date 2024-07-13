@@ -53,5 +53,15 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	    <key>CFBundleURLTypes</key>
+        <array>
+          <dict>
+          <key>CFBundleURLSchemes</key>
+          <array>
+            <!-- google login -->
+            <string>com.googleusercontent.apps.686347951949-novv72ter06ufru24nlfcd7v2lgfnafv</string>
+          </array>
+          </dict>
+        </array>
 </dict>
 </plist>

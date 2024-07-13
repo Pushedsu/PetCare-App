@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:pet_care/module/post/post_model.dart';
 import 'package:pet_care/module/user/token_model.dart';
 import 'package:pet_care/utils/app_constants.dart';
 import '../../connect/connect_server.dart';
@@ -10,12 +11,65 @@ import '../../module/response/response_model.dart';
 import '../../module/user/user_model.dart';
 import '../../widgets/text_field.dart';
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
+  const LoginPage({Key? key}) : super(key: key);
+
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
   TextEditingController idController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController emailConfirmController = TextEditingController();
   String id = '';
+  bool isLoading = false;
   static final storage = FlutterSecureStorage();
+
+  Future<void> sendEmailToServer() async {
+    var res_email = findPasswordByEmail(emailConfirmController.text).toJson();
+    var response_email = await Post().findPasswordByEmail(res_email);
+    if(response_email.statusCode == 201) {
+      Navigator.pop(context);
+      ResIsBoolSuccessModel res = ResIsBoolSuccessModel.fromJson(jsonDecode(response_email.body));
+      print('비밀번호 재설정 성공! ${res.success}');
+      showDialog(
+          context: context,
+          builder: (BuildContext context) => AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+            title: Text('이메일 인증 성공'),
+            content: Text('임시 비밀번호가 발송되었습니다.'),
+            actions: <Widget>[
+              TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text('Ok')),
+            ],
+          )
+      );
+      emailConfirmController.clear();
+    } else {
+      ResIsBoolFailList res = ResIsBoolFailList.fromJson(jsonDecode(response_email.body));
+      showDialog(
+          context: context,
+          builder: (BuildContext context) => AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+            title: Text('실패'),
+            content: Text('${res.message![0]}...'),
+            actions: <Widget>[
+              TextButton(
+                  onPressed: () =>
+                      Navigator.pop(context),
+                  child: Text('Ok')),
+            ],
+          )
+      );
+      emailConfirmController.clear();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +90,7 @@ class LoginPage extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  SizedBox(height: 50.h,),
+                  SizedBox(height: 10.h,),
                   Container(
                     height: 150.h,
                     width: 150.w,
@@ -186,14 +240,14 @@ class LoginPage extends StatelessWidget {
                   ),
                   GestureDetector(
                     onTap: () {
-                      Navigator.pushNamed(context, '/signUp');
+                      Navigator.pushNamed(context, '/googleLogin');
                     },
                     child: Container(
                       height: 65.h,
                       width: 400.w,
                       child: Center(
                         child: Text(
-                          '회원가입',
+                          'SNS 로그인',
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 20.sp,
@@ -208,44 +262,89 @@ class LoginPage extends StatelessWidget {
                               color: Colors.grey.withOpacity(0.7),
                               spreadRadius: 0,
                               blurRadius: 5.0,
-                              offset: Offset(0, 10), // changes position of shadow
+                              offset:
+                              Offset(0, 10), // changes position of shadow
                             ),
                           ],
                           color: Colors.teal,
                           borderRadius: BorderRadius.all(Radius.circular(10))),
                     ),
                   ),
-                  SizedBox(
-                    height: 20.h,
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      showDialog(
-                          context: context,
-                          builder: (BuildContext context) => AlertDialog(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10.0),
+                  SizedBox(height: 20.h),
+                  Container(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.pushNamed(context, '/signUp');
+                          },
+                          child: Text(
+                            "회원가입",
+                            style: TextStyle(
+                              fontSize: 20.sp,
+                              decoration: TextDecoration.underline,
                             ),
-                            title: Text('이메일을 입력하시오.'),
-                            content: CustomTextField(
-                              controller: emailConfirmController,
-                              text: '이메일 확인',
-                              hintText: '이메일 입력',
+                          ),
+                        ),
+                        SizedBox(width: 2.w,),
+                        Text(
+                          "|",
+                          style: TextStyle(
+                            fontSize: 20.sp,
+                          ),
+                        ),
+                        SizedBox(width: 2.w,),
+                        GestureDetector(
+                          onTap: () {
+                            showDialog(
+                              context: context,
+                              barrierDismissible: true,  // 사용자가 다이얼로그 바깥을 터치하여 닫을 수 없도록 설정
+                              builder: (BuildContext context) {
+                                return StatefulBuilder(
+                                  builder: (BuildContext context, StateSetter setStateDialog) {
+                                    return AlertDialog(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(10.0),
+                                      ),
+                                      title: Text('이메일을 입력하시오.'),
+                                      content: isLoading
+                                          ? SizedBox(height: 100, child: Center(child: CircularProgressIndicator(),),)
+                                          : CustomTextField(
+                                        controller: emailConfirmController,
+                                        text: '이메일 확인',
+                                        hintText: '이메일 입력',
+                                      ),
+                                      actions: <Widget>[
+                                        TextButton(
+                                          onPressed: () async {
+                                            if (!isLoading) {
+                                              setStateDialog(() => isLoading = true);  // 대화상자 내 로컬 상태 업데이트
+                                              try {
+                                                await sendEmailToServer();
+                                              } finally {
+                                                setStateDialog(() => isLoading = false);  // 작업 완료 후 로딩 상태 업데이트
+                                              }
+                                            }
+                                          },
+                                          child: Text('Ok'),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                              },
+                            );
+                          },
+                          child: Text(
+                            "비밀번호찾기",
+                            style: TextStyle(
+                              fontSize: 20.sp,
+                              decoration: TextDecoration.underline,
                             ),
-                            actions: <Widget>[
-                              TextButton(
-                                  onPressed: () => Na현vigator.pop(context),
-                                  child: Text('Ok')),
-                            ],
-                          )
-                      );
-                    },
-                    child: Text(
-                      "비밀번호찾기",
-                      style: TextStyle(
-                        fontSize: 20.sp,
-                        decoration: TextDecoration.underline,
-                      ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
@@ -257,4 +356,3 @@ class LoginPage extends StatelessWidget {
     );
   }
 }
-

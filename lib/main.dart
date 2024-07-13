@@ -8,6 +8,7 @@ import 'package:pet_care/pages/Profile/change_password_page.dart';
 import 'package:pet_care/pages/Profile/delete_account_page.dart';
 import 'package:pet_care/pages/Profile/member_edit_page.dart';
 import 'package:pet_care/pages/Profile/my_posts_page.dart';
+import 'package:pet_care/pages/User/google_login_page.dart';
 import 'package:pet_care/providers/events_provider.dart';
 import 'package:pet_care/providers/on_off_provider.dart';
 import 'package:pet_care/providers/page_index_provider.dart';
@@ -55,6 +56,7 @@ class MyApp extends StatelessWidget {
               '/memberEdit': (context)=> MemberEditPage(),
               '/changeNickname': (context)=> ChangeNamePage(),
               '/changePassword': (context)=>ChangePasswordPage(),
+              '/googleLogin': (context)=>GoogleLoginPage(),
               '/login': (context) => LoginPage(),
               '/signUp': (context) => SignUpPage(),
               '/main': (context) => MainPage(),

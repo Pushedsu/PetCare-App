@@ -55,6 +55,16 @@ class Get {
     );
     return response;
   }
+
+  Future<http.Response> getGoogleSignIn() async{
+    final response = await http.get(
+      Uri.parse('http://localhost:3000/auth/redirect'),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+      },
+    );
+    return response;
+  }
 }
 
 class Post {
