@@ -26,6 +26,7 @@ class _SignUpPageState extends State<SignUpPage> {
   String nameButtonText = '미입력';
   String emailConfirm = '이메일 인증';
   bool isEnabled = true;
+  bool isLoading = false; // 로딩 상태 추가
 
   @override
   void dispose() {
@@ -297,6 +298,9 @@ class _SignUpPageState extends State<SignUpPage> {
                                       ));
                                   emailController.clear();
                                 } else if(emailConfirm == "이메일 인증") {
+                                  setState(() {
+                                    isLoading = true;
+                                  });
                                   var data = emailSend(emailController.text).toJson();
                                   var response = await Post().sendVerification(data);
                                   if(response.statusCode == 201) {
@@ -323,7 +327,27 @@ class _SignUpPageState extends State<SignUpPage> {
                                             ],
                                           ));
                                     }
+                                  } else {
+                                    ResIsBoolFail res = ResIsBoolFail.fromJson(jsonDecode(response.body));
+                                    showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) => AlertDialog(
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(10.0),
+                                          ),
+                                          title: Text('${res.message}'),
+                                          content: Text('다시 입력하시오'),
+                                          actions: <Widget>[
+                                            TextButton(
+                                                onPressed: () => Navigator.pop(context),
+                                                child: Text('Ok')),
+                                          ],
+                                        )
+                                    );
                                   }
+                                  setState(() {
+                                    isLoading = false;
+                                  });
                                 }
                               },
                               child: Container(
@@ -342,7 +366,9 @@ class _SignUpPageState extends State<SignUpPage> {
                                     borderRadius:
                                     BorderRadius.all(Radius.circular(10))),
                                 child: Center(
-                                  child: Text(
+                                  child: isLoading // 로딩 상태에 따라 UI 변경
+                                      ? CircularProgressIndicator(color: Colors.white)
+                                      :Text(
                                     emailConfirm,
                                     style: TextStyle(
                                       color: Colors.white,
@@ -463,10 +489,18 @@ class _SignUpPageState extends State<SignUpPage> {
                                     ],
                                   )
                               );
-                              emailController.clear();
-                              nameController.clear();
-                              passwordController.clear();
-                              confirmPasswordController.clear();
+                              if(res.message == "입력한 이름이 존재합니다. ") {
+                                nameButtonText = '미입력';
+                                nameController.clear();
+                              } else {
+                                emailController.clear();
+                                nameController.clear();
+                                passwordController.clear();
+                                confirmPasswordController.clear();
+                                isEnabled = true;
+                                nameButtonText = '미입력';
+                                emailConfirm = '이메일 인증';
+                              }
                             }
                           }
                         },
