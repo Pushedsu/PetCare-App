@@ -96,6 +96,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           maxWidth: 150.w,
                           imageQuality: 50, // 이미지 크기 압축을 위해 퀄리티를 30으로 낮춤.
                         );
+
                         if(imgUrl!='') {
                           RegExpMatch? match = appConstants.deleteImgRegExp.firstMatch(imgUrl);
                           if (match != null) {
@@ -124,6 +125,30 @@ class _ProfilePageState extends State<ProfilePage> {
                               );
                             }
                           }
+                          var response = await Post().updateImg(pickImage!,userObjId);
+                          if(response.statusCode == 201) {
+                            GetUserInfoModel res = GetUserInfoModel.fromJson(jsonDecode(response.body));
+                            imgUrl=res.data.image;
+                            Provider.of<UserInfoProvider>(context,listen: false).setImgUrl(imgUrl);
+                          } else {
+                            ResIsBoolFailList post = ResIsBoolFailList.fromJson(jsonDecode(response.body));
+                            showDialog(
+                                context: context,
+                                builder: (BuildContext context) => AlertDialog(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10.0),
+                                  ),
+                                  title: Text('다시 이미지를 선택하시오'),
+                                  content: Text('${post.message![0]}...'),
+                                  actions: <Widget>[
+                                    TextButton(
+                                        onPressed: () => Navigator.pop(context),
+                                        child: Text('Ok')),
+                                  ],
+                                )
+                            );
+                          }
+                        } else {
                           var response = await Post().updateImg(pickImage!,userObjId);
                           if(response.statusCode == 201) {
                             GetUserInfoModel res = GetUserInfoModel.fromJson(jsonDecode(response.body));

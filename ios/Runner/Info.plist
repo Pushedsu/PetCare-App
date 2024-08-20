@@ -24,12 +24,12 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
-	<key>NSCameraUsageDescription</key>
-    <string>카메라 사용에 필요합니다.</string>
+    <key>NSCameraUsageDescription</key>
+    <string>Used to demonstrate image picker plugin</string>
     <key>NSMicrophoneUsageDescription</key>
-    <string>마이크 사용에 필요합니다.</string>
+    <string>Used to capture audio for image picker plugin</string>
     <key>NSPhotoLibraryUsageDescription</key>
-    <string>사진 라이브러리 사용에 필요합니다.</string>
+    <string>Used to demonstrate image picker plugin</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
